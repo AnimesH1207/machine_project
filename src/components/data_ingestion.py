@@ -6,6 +6,8 @@ import pandas as pd
 
 from sklearn.model_selection import train_test_split
 from dataclasses import dataclass
+from src.components.data_transformation import Datatransformation
+from src.components.model_training import ModelTrainer
 
 @dataclass
 class DataingestionConfig:
@@ -42,7 +44,24 @@ class DataIngestion:
         except Exception as e:
             raise CustomException(e,sys)
             
+if __name__ == "__main__":
+    # 1. Run Data Ingestion
+    print("--- Starting Data Ingestion ---")
+    obj = DataIngestion()
+    train_data, test_data = obj.initiate_data_ingestion()
 
-if __name__=="__main__":
-    obj=DataIngestion()
-    obj.initiate_data_ingestion()
+    # 2. Run Data Transformation
+    print("--- Starting Data Transformation ---")
+    data_transformation = Datatransformation()
+    train_arr, test_arr, preprocessor_path = data_transformation.initiate_data_transformation(train_data, test_data)
+
+    # 3. Run Model Training and Print R2 Score
+    print("--- Starting Model Training ---")
+    model_trainer = ModelTrainer()
+    
+    # initiate_model_trainer should return the R2 score at the end of its function
+    best_r2_score = model_trainer.initiate_model_trainer(train_arr, test_arr)
+    
+    print("==================================================")
+    print(f"The Best Model R2 Score is: {best_r2_score}")
+    print("==================================================")
